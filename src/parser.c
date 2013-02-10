@@ -6,10 +6,17 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
   /* debug_info("here"); */
   /* cmd_list_t* cmd_list = malloc(sizeof(cmd_list_t)); */
 
+  if (cmd_line == NULL || strlen(cmd_line) == 0){
+    cmd_list->count = 0;
+    cmd_list->head = NULL;
+    return;
+  }
   int i = 0;
   char c;
 
-  char* temp = malloc(MAXLEN);
+  char temp[MAXLEN];
+  /* char* temp; */
+  /* temp = malloc(sizeof(char) * MAXLEN); */
   int temp_i = 0;
   int in_arg = FALSE;
   int in_redir_stdout = FALSE;
@@ -60,7 +67,7 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
         }
         else{
           cur_cmd->argv = realloc(cur_cmd->argv, 
-                                  (sizeof(char*) * (cur_cmd->argc + 1)));
+                                  sizeof(char*) * (cur_cmd->argc + 1));
           cur_cmd->argv[cur_cmd->argc] = malloc(sizeof(char) * (strlen(temp) + 1));
           strcpy(cur_cmd->argv[cur_cmd->argc],temp);
           cur_cmd->argc++;
@@ -69,6 +76,72 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
         break;
     }
     switch(c){
+    case '|':
+      if (in_arg){
+        /* already read something*/
+        temp[temp_i] = '\0';
+        temp_i = 0;
+        in_arg = FALSE;
+        if (in_redir_stderr_2){
+          debug_info(temp);
+          in_redir_stderr_1 = FALSE;
+          in_redir_stderr_2 = FALSE;
+          cur_cmd->redirect_error = realloc(cur_cmd->redirect_error,
+                                            sizeof(char) * (strlen(temp) + 1));
+          strcpy(cur_cmd->redirect_error,temp);
+        }
+        else if (in_redir_stdout){
+          /* temp stores the redirect output filename */
+          in_redir_stdout = FALSE;
+          cur_cmd->redirect_output = realloc(cur_cmd->redirect_output,
+                                             sizeof(char) * (strlen(temp) + 1));
+          strcpy(cur_cmd->redirect_output,temp);
+        }
+        else if (in_redir_stdin){
+          in_redir_stdin = FALSE;
+          cur_cmd->redirect_input = realloc(cur_cmd->redirect_input,
+                                            sizeof(char) * (strlen(temp) + 1));
+          strcpy(cur_cmd->redirect_input,temp);
+        }
+        else{
+          cur_cmd->argv = realloc(cur_cmd->argv, 
+                                  (sizeof(char*) * (cur_cmd->argc + 1)));
+          cur_cmd->argv[cur_cmd->argc] = malloc(sizeof(char) * (strlen(temp) + 1));
+          strcpy(cur_cmd->argv[cur_cmd->argc],temp);
+          cur_cmd->argc++;
+        }
+        /* if (temp != NULL){ */
+        /*   free(temp); /\*erase temp*\/ */
+        /*   temp = NULL; */
+        /* } */
+        /* temp = malloc(MAXLEN); */
+      }
+      else{
+        if (cur_cmd->argc < 1){
+          /* no input for first command */
+          /* free_cmd(cur_cmd); */
+          cmd_list->count = 0;
+          cmd_list->head = NULL;
+          return;
+        }
+      }
+
+      cmd_t* new_cmd = malloc(sizeof(cmd_t));
+      new_cmd->argc = 0;
+      new_cmd->argv = 0;
+      new_cmd->redirect_input = 0;
+      new_cmd->redirect_output = 0;
+      new_cmd->redirect_error = 0;
+      new_cmd->prev = NULL;
+      new_cmd->next = NULL;
+
+
+      cmd_list->count++;
+      cur_cmd->next = new_cmd;
+      new_cmd->prev = cur_cmd;
+      cur_cmd = new_cmd;
+      in_arg = FALSE;
+      break;
     case ' ':
       if  (!in_arg){
         continue;
@@ -105,10 +178,11 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
         strcpy(cur_cmd->argv[cur_cmd->argc],temp);
         cur_cmd->argc++;
       }
-      if (temp != NULL){
-        free(temp); /*erase temp*/
-      }
-      temp = malloc(MAXLEN);
+      /* if (temp != NULL){ */
+      /*   free(temp); /\*erase temp*\/ */
+      /*   temp = NULL; */
+      /* } */
+      /* temp = malloc(MAXLEN); */
       break;
 
     case '>':
@@ -125,10 +199,11 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
           cur_cmd->argv[cur_cmd->argc] = malloc(sizeof(char) * (strlen(temp) + 1));
           strcpy(cur_cmd->argv[cur_cmd->argc],temp);
           cur_cmd->argc++;
-          if (temp != NULL){
-            free(temp); /*erase temp*/
-          }
-          temp = malloc(MAXLEN);
+          /* if (temp != NULL){ */
+          /*   free(temp); /\*erase temp*\/ */
+          /*   temp = NULL; */
+          /* } */
+          /* temp = malloc(MAXLEN); */
         }
       }
       else {
@@ -149,10 +224,11 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
         cur_cmd->argv[cur_cmd->argc] = malloc(sizeof(char) * (strlen(temp) + 1));
         strcpy(cur_cmd->argv[cur_cmd->argc],temp);
         cur_cmd->argc++;
-        if (temp != NULL){
-          free(temp); /*erase temp*/
-        }
-        temp = malloc(MAXLEN);
+        /* if (temp != NULL){ */
+        /*   free(temp); /\*erase temp*\/ */
+        /*   temp = NULL; */
+        /* } */
+        /* temp = malloc(MAXLEN); */
       }
       break; 
 
@@ -177,9 +253,10 @@ void parse_cmd(cmd_list_t* cmd_list,char* cmd_line){
     }
   }
 
-  if (temp != NULL){
-    free(temp);
-  }
+  /* if (temp != NULL){ */
+  /*   free(temp); */
+  /*   temp = NULL; */
+  /* } */
 
   /* return cmd_list; */
 }
@@ -192,6 +269,10 @@ void free_cmd_list(cmd_list_t* list){
     list->head = list->head->next;
     free_cmd(tmp);
   }
+  if(list != NULL){
+    free(list);
+    list = NULL;
+  }
 }
 
 void free_cmd(cmd_t* cmd){
@@ -199,26 +280,35 @@ void free_cmd(cmd_t* cmd){
   while(i < cmd->argc){
     if(cmd->argv[i] != NULL){
       free(cmd->argv[i]);
+      cmd->argv[i] = NULL;
     }
     i++;
   }
   if(cmd->argv != NULL){
     free(cmd->argv);
+    cmd->argv = NULL;
   }
   if (cmd->redirect_input != 0){
     free(cmd->redirect_input);
+    cmd->redirect_input = NULL;
   }
   if (cmd->redirect_output != 0){
     free(cmd->redirect_output);
+    cmd->redirect_output = NULL;
   }
   if(cmd->redirect_error != 0){
     free(cmd->redirect_error);
+    cmd->redirect_error = NULL;
   }
-  free(cmd);
+  if (cmd != NULL){
+    free(cmd);
+    cmd = NULL;
+  }
 }
 
 void print_cmd(cmd_t* cmd){
   if (cmd != NULL){
+    printf("--------------\n");
     if (cmd->argv[0] != NULL){
       printf("NAME:%s\n",cmd->argv[0]);
     }
@@ -239,6 +329,7 @@ void print_cmd(cmd_t* cmd){
     if (cmd->redirect_error != 0){
       printf("ERR:%s\n",cmd->redirect_error);
     }
+  printf("--------------\n");
   }
 
 }

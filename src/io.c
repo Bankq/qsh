@@ -15,12 +15,12 @@ void print_promt(){
   fflush(stdout);
 }
 
-char* get_cmd_line(){
+void get_cmd_line(char* cmd){
 
   char c;
   size_t used = 0;
   
-  char* cmd = malloc(MAXLEN);
+  /* char* cmd = malloc(MAXLEN); */
 
   /* __fpurge(stdin); */
   BEGIN_READ();
@@ -29,7 +29,7 @@ char* get_cmd_line(){
   }
   cmd[used] = '\0';
   END_READ();
-  return cmd;
+  /* return cmd; */
 }
 
 

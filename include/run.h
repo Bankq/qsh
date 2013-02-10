@@ -19,9 +19,9 @@
 void run_cmd(cmd_list_t* cmd_list);
 /* run builtin command */
 void run_builtin_cmd(cmd_t* cmd);
-void run_external_cmd(cmd_t* cmd);
+void run_external_cmd(cmd_t* cmd,int fd_in,int fd_out,int fd_err);
 int is_builtin_cmd(char* name);
-void redirect_io(cmd_t* cmd);
-void restore_io();
+void redirect_io(cmd_t* cmd,int fd_in,int fd_out,int fd_err);
+void restore_io(int fd_in, int fd_out, int fd_err);
 
 #endif

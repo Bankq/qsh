@@ -42,27 +42,18 @@ void init(){
 int main(){
 
   init();
-
+  char *cmd_line = malloc(sizeof(char) * MAXLEN);
   while (!FORCE_EXIT){
-
-    /* cmd_line = malloc(sizeof(char) * BUFSIZE); */
-    /* cmd_list = malloc(sizeof(cmd_list_t)); */
-
     print_promt();
-
-    char *cmd_line = get_cmd_line();
-    /* debug_info("here"); */
-    /* debug_info(cmd_line); */
-
+    get_cmd_line(cmd_line);
     cmd_list_t *cmd_list = malloc(sizeof(cmd_list_t));
     parse_cmd(cmd_list,cmd_line);
     run_cmd(cmd_list);
     free_cmd_list(cmd_list);
-    if (cmd_line != NULL){
-      free(cmd_line);
-    }
-    /* cmd_list = malloc(sizeof(cmd_list_t)); */
-    /* cmd_line = malloc(sizeof(char) * BUFSIZE); */
+  }
+  if (cmd_line != NULL){
+    free(cmd_line);
+    cmd_line = NULL;
   }
   return 0;
 }

@@ -21,7 +21,7 @@ int FORCE_EXIT;
 int READING;
 
 void print_promt();
-char* get_cmd_line();
+void get_cmd_line(char *);
 
 void BEGIN_READ(void);
 void END_READ(void);

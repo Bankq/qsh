@@ -17,7 +17,8 @@ int is_path(char* name);
 /* 
    parse PATH into a list of pathname 
 */
-char** get_path_list(char* PATH);
+char* get_a_path(char* PATH,int n);
+void get_path_list(char** list,char* PATH);
 /* take a filename and path, concatenate into a pathname */
 char* get_path_name(char* file, char* path);
 

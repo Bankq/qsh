@@ -14,27 +14,30 @@ void path_concatenate(char*dest, char* a, char *b){
 }
 
 char* path_tailor(char* str, char* substr){
-  char** list =  get_path_list(str);
-  char *dest = malloc(MAXLEN);/* (sizeof(char)* (strlen(str) + 1)); */
-  int found = FALSE;
-  int i = 0;
-  while (list[i] != NULL){
-    /* printf("%d ",strlen(list[i])); */
-    if (strcmp(substr,list[i]) != 0){
-      /* find substring */
-      if (!found){
-        /*first*/
-        strcpy(dest,list[i]);
-        found = TRUE;
-      }
-      else{
-        strcat(dest,":");
-        strcat(dest,list[i]);
-      }
-    }
-    i++;
+
+  char* m_str = malloc(sizeof(char) * (strlen(str) + 3));
+  strcpy(m_str,":");
+  strcat(m_str,str);
+  strcat(m_str,":");
+
+  char* m_substr = malloc(sizeof(char) * (strlen(substr) + 3));
+  strcpy(m_substr,":");
+  strcat(m_substr,substr);
+  strcat(m_substr,":");
+
+  int len2 = strlen(m_substr);
+
+  char* anchor;
+  while ((anchor = strstr(m_str, m_substr)) != NULL){
+    memmove(anchor,(anchor + len2 - 1),(strlen(anchor) - len2 + 2));
   }
-  return dest;
+
+  char* result = malloc(sizeof(char) * (strlen(m_str) - 1));
+  strncpy(result,m_str+1,(strlen(m_str) - 2));
+  result[strlen(m_str)] = '\0';
+  free(m_str);
+  free(m_substr);
+  return result;
 }
 
 
@@ -48,14 +51,29 @@ int is_path(char* name){
   return FALSE;
 }
 
-char** get_path_list(char* PATH){
+char *get_a_path(char* PATH, int n){
+  char* s;
+  int i = 0;
+  const char* delim = ":";
+  s = strtok(PATH,delim);
+  while (i++ < n){
+    s = strtok(NULL,delim);
+    if (s == NULL){
+      return NULL;
+    }
+  }
+  return s;
+}
+
+
+void get_path_list(char** list,char* PATH){
   int flag = FALSE;
 
   int count = 0;
   int i = 0;
   char c;
 
-  char **list = malloc(sizeof(char*));
+  /* char **list = malloc(sizeof(char*) * MAXLEN); */
   /* list = realloc(list,sizeof(char*)); */
 
   int tmp_i = 0;
@@ -73,6 +91,7 @@ char** get_path_list(char* PATH){
         count++;
         if (tmp != NULL){
           free(tmp);
+          tmp = NULL;
         }
         tmp = malloc(sizeof(char) * MAXLEN);
         /* tmp = calloc(MAXLEN,sizeof(char)); */
@@ -95,9 +114,10 @@ char** get_path_list(char* PATH){
 
   if (tmp != NULL) {
     free(tmp);
+    tmp = NULL;
   }
   list[count] = NULL;
-  return list;
+  /* return list; */
 }
 
 
