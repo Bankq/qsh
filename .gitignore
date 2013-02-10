@@ -1,0 +1,19 @@
+# object files
+*.o
+
+# libraries
+*.lib
+*.a
+
+# shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# executables
+*.out
+
+# emacs temp files
+*.*~
+\#*
