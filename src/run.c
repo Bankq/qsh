@@ -5,16 +5,15 @@ int STDIN_REDIR = -1;
 int STDERR_REDIR = -1;
 
 
-void run_cmd(cmd_list_t* cmd_list){
+int run_cmd(cmd_list_t* cmd_list){
   if(cmd_list == NULL || cmd_list->count == 0){
-    return;
+    return 0;
   }
 
   cmd_t* cur_cmd = cmd_list->head;
   int fd_in = -1, fd_out, fd_err = -1;
   while (cur_cmd != NULL){
 
-    print_cmd(cur_cmd);
     int fd_pipe[2];
     if (cur_cmd->next != NULL){
       /* if there's a next command */
@@ -38,7 +37,7 @@ void run_cmd(cmd_list_t* cmd_list){
     restore_io(fd_in,fd_out,fd_err);
     cur_cmd = cur_cmd->next;
   }
-  return;
+  return 1;
 }
 
 void run_external_cmd(cmd_t* cmd,int fd_in,int fd_out, int fd_err){
@@ -47,9 +46,6 @@ void run_external_cmd(cmd_t* cmd,int fd_in,int fd_out, int fd_err){
   int statloc;
 
   char *path_name = malloc(sizeof(char) * MAXLEN);
-  /* char** path_list = malloc(sizeof(char*) * MAXLEN); */
-  /* get_path_list(path_list,PATH); */
-
   if ((child = fork()) < 0){
     perror("ERROR:fork error!\n");
     exit(-1);
@@ -82,44 +78,28 @@ void run_external_cmd(cmd_t* cmd,int fd_in,int fd_out, int fd_err){
       cur_path = get_a_path(tmp,i);
       while (cur_path != NULL){
         path_name = get_path_name(cmd->argv[0],cur_path);
-        printf("%d %s\n",i,path_name);
         ret = execv(path_name,cmd->argv);
-
         if (tmp != NULL){
           free(tmp);
           tmp = NULL;
         }
-
         tmp = malloc(sizeof(char) * (strlen(PATH) + 1));
         strcpy(tmp,PATH);
         cur_path = get_a_path(tmp,++i);
       }
-
     }
   }
   else {
-    /* debug_info("IN PARENT"); */
     waitpid(child,&statloc,0);
     if (statloc == 139){
       fprintf(stderr,"Error: command not found: %s\n",cmd->argv[0]);
     }
-
   }
 
   if (path_name != NULL){
     free(path_name);
     path_name  = NULL;
   }
-  /* if(path_list != NULL){ */
-  /*   int i = 0; */
-  /*   while (path_list[i] != NULL){ */
-  /*     free(path_list[i]); */
-  /*     path_list[i] = 0; */
-  /*     i++; */
-  /*   } */
-  /*   free(path_list); */
-  /*   path_list = NULL; */
-  /* } */
 }
 
 void run_builtin_cmd(cmd_t* cmd){
@@ -130,7 +110,6 @@ void run_builtin_cmd(cmd_t* cmd){
   }
   else if (strcmp(name,"cd") == 0) {
     char *dir = getenv("HOME");
-    /* debug_info(dir); */
     if (cmd->argc > 1){
       dir = malloc(sizeof(char) * (strlen(cmd->argv[1]) + 1));
       strcpy(dir,cmd->argv[1]);
@@ -142,7 +121,6 @@ void run_builtin_cmd(cmd_t* cmd){
     return;
   }
   else if (strcmp(name,"path") == 0){
-    /* print_cmd(cmd); */
     if (cmd->argc == 1){
       /* bare "path" command will printn the current PATH */
       fprintf(stdout,"%s\n",PATH);

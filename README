@@ -1,0 +1,46 @@
+
+Shell
+
+W4118 Operating System - 2013 Spring - Columbia University
+Assignment 1
+
+Author: Hang Qian (hq2124(at)columbia.edu)
+
+
+Description:
+        
+MyShell is a simple shell implementation in C, running on Linux.
+
+Compile:
+        make
+Run:
+        ./myshell
+
+Assumption:
+        1. Assume there's at least one space before 2> redirection.
+        2. When there are multiple redirection, take the last one.
+
+File:
+        myshell: main program
+        utils: contains several ultility function
+        parser: parse user input
+        run: runtime of shell
+        io: handle input/output
+        Makefile:
+        README:
+
+        source file in src/
+        corresponding header file in include/
+
+        input: sample input
+        output: sample output
+
+Solution:
+        parser: 
+        parse the command line into a list of command_t
+        which seperated by "|". It stores argc,argv and redirected 
+        input/ouput/error stream.
+
+        run:
+        loop aroung the command list and run it.
+        use only one pair of pipe fds  to handle all pipes.

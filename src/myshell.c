@@ -43,12 +43,15 @@ int main(){
 
   init();
   char *cmd_line = malloc(sizeof(char) * MAXLEN);
+  int do_print = TRUE;
   while (!FORCE_EXIT){
-    print_promt();
+    if (do_print){
+      print_promt();
+    }
     get_cmd_line(cmd_line);
     cmd_list_t *cmd_list = malloc(sizeof(cmd_list_t));
     parse_cmd(cmd_list,cmd_line);
-    run_cmd(cmd_list);
+    do_print = run_cmd(cmd_list);
     free_cmd_list(cmd_list);
   }
   if (cmd_line != NULL){

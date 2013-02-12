@@ -1,0 +1,19 @@
+$total 144
+-rw-r--r-- 1 bank wheel   536 Feb 10 09:15 Makefile
+-rw-r--r-- 1 bank wheel  1006 Feb 10 18:08 README
+drwxr-xr-x 2 bank wheel  4096 Feb 10 18:09 include
+-rw-r--r-- 1 bank wheel    39 Feb 10 18:14 input
+-rw-r--r-- 1 bank wheel    69 Feb 10 18:01 input~
+-rw-r--r-- 1 bank wheel  8936 Feb 10 18:10 io.o
+-rwxr-xr-x 1 bank wheel 33973 Feb 10 18:10 myshell
+-rw-r--r-- 1 bank wheel  7376 Feb 10 18:10 myshell.o
+-rw-r--r-- 1 bank wheel     1 Feb 10 18:14 output
+-rw-r--r-- 1 bank wheel 13208 Feb 10 18:10 parser.o
+-rw-r--r-- 1 bank wheel 17088 Feb 10 18:10 run.o
+drwxr-xr-x 2 bank wheel  4096 Feb 10 18:10 src
+-rw-r--r-- 1 bank wheel   856 Feb 10 18:14 test
+-rw-r--r-- 1 bank wheel 11296 Feb 10 18:10 utils.o
+-rw-r--r-- 1 bank wheel   680 Feb 10 17:54 writtenassignment-hq2124.txt
+-rw-r--r-- 1 bank wheel   144 Feb 10 17:42 writtenassignment-hq2124.txt~
+$5
+$

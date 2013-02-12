@@ -1,6 +1,7 @@
 /*
   io
 
+  Author: Hang Qian
   contains all functions with I/O
 
 */
@@ -11,7 +12,6 @@
 #include "stdlib.h"
 #include <unistd.h>
 #include <stdio.h>
-/* #include <stdio_ext.h> */
 #include <errno.h>
 
 

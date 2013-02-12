@@ -65,62 +65,6 @@ char *get_a_path(char* PATH, int n){
   return s;
 }
 
-
-void get_path_list(char** list,char* PATH){
-  int flag = FALSE;
-
-  int count = 0;
-  int i = 0;
-  char c;
-
-  /* char **list = malloc(sizeof(char*) * MAXLEN); */
-  /* list = realloc(list,sizeof(char*)); */
-
-  int tmp_i = 0;
-  char* tmp = malloc((sizeof(char) * MAXLEN));
-  
-  while ((c = PATH[i++]) != '\0'){
-    switch(c){
-    case ':':
-      if (flag){
-        flag = FALSE;
-        tmp[tmp_i] = '\0';
-        list = realloc(list,sizeof(char*) * (count + 1));
-        list[count] = malloc(sizeof(char) * (strlen(tmp) + 1));
-        strcpy(list[count],tmp);
-        count++;
-        if (tmp != NULL){
-          free(tmp);
-          tmp = NULL;
-        }
-        tmp = malloc(sizeof(char) * MAXLEN);
-        /* tmp = calloc(MAXLEN,sizeof(char)); */
-        tmp_i = 0;
-      }
-      break;
-    default:
-      flag = TRUE;
-      tmp[tmp_i++] = c;
-    }
-  }
-
-  if (flag){
-    tmp[tmp_i] = '\0';
-    list = realloc(list,sizeof(char*) * (count + 1));
-    list[count] = malloc(sizeof(char) * (strlen(tmp) + 1));
-    strcpy(list[count],tmp);
-    count++;
-  }
-
-  if (tmp != NULL) {
-    free(tmp);
-    tmp = NULL;
-  }
-  list[count] = NULL;
-  /* return list; */
-}
-
-
 char* get_path_name(char* filename, char* path){
   if (filename == NULL || path == NULL){
     return NULL;
